@@ -1,0 +1,437 @@
+package sciFiLi;
+import java.util.*;
+import java.io.*;
+import list.List;
+import binaryTree.BinaryTree;
+import stack.Stack;
+
+/*class used to store the variables such as the name of the author and
+title of the book among other things
+*/
+class Book
+{
+	private String title;
+	private String author;
+	private int checked;
+	private int priority;
+	
+	//stores all the important things to know about the book
+	public Book(String title, String author, int checked, int priority)
+	{
+		this.title = title;
+		this.author = author;
+		this.checked = checked;
+		this.priority = priority;
+	}
+	
+	//gets the title of the book
+	public String getTitle()
+	{
+		return this.title;
+	}
+	
+	//gets the priority that determines the importance of the book
+	public int getPriority()
+	{
+		return this.priority;
+	}
+	
+	public String getChecked()
+	{
+		if(this.checked == 1)
+		{
+			return "In";
+		}
+		return "Out";
+	}
+	
+	public void setChecked(int n)
+	{
+		this.checked = n;
+	}
+	
+}
+
+
+//class used to store an author and the books they made
+class Author
+{
+	private String name;
+	private List<String> books;
+	
+	//constructor
+	public Author(String name)
+	{
+		this.name = name;
+		books = new List<String>();
+		//this.books.InsertAfter(book);
+	}
+	
+	//adds the books the author has made to a linked list
+	public void addBook(String Book)
+	{
+		this.books.InsertAfter(Book);
+	}
+	
+	//lists all of the authors books
+	public String[] listBooks()
+	{
+		int i = 0;
+		//System.out.print("Books: ");
+		String[] Books = new String[this.books.GetSize()];
+		while(i < books.GetSize())
+		{
+			books.SetPos(i);
+			Books[i] = books.GetValue();
+			//System.out.print(books.GetValue() + "; ");
+			i++;
+		}
+		return Books;
+	}
+	
+	//returns the authors name
+	public String getName()
+	{
+		return this.name;
+	}
+}
+
+//class meant to organize the books in a library
+public class SciFiLi {
+
+	private BinaryTree books;
+	private BinaryTree authors;
+	private List<Author> authorList;
+	private List<Book> bookList;
+	private Stack<String> bookReturn;
+	private Book[] priority;
+	
+	//constructor
+	public SciFiLi()
+	{
+		books = new BinaryTree();
+		authors = new BinaryTree();
+		bookList = new List<Book>();
+		authorList = new List<Author>();
+		bookReturn = new Stack<String>();
+	}
+	
+	//inserts new elements into SciFiLi
+	public void insert(String title, String author, int checked, int priority)
+	{
+		//checks to see if the author has been added previously
+		boolean authorFound = authors.search(author);
+		
+		//inserts the book into the books binary tree
+		books.insert(title);
+		
+		//inserts books into the book linked list so that additional elements such as the author, checked in or out, and priority may be accessed
+		bookList.InsertBefore(new Book(title, author, checked, priority));
+		
+		//if the author is found in the binary tree then it will only add the book to the author
+		if(authorFound)
+		{
+			
+			authorList.First();
+			boolean authorNotFound = author.equals(authorList.GetValue().getName());
+			
+			while(!authorNotFound)
+			{
+				authorList.Next();
+				authorNotFound = author.equals(authorList.GetValue().getName());
+				
+					
+				
+			}
+			
+			authorList.GetValue().addBook(title);
+		}
+		
+		//otherwise, it will create a new author class within the linked list
+		else
+		{
+			authors.insert(author);
+			authorList.InsertBefore(new Author(author));
+			authorList.GetValue().addBook(title);
+		}
+		
+	}
+	
+	public void listAuthor(String author)
+	{
+		boolean authorFound = authors.search(author);
+		if(authorFound)
+		{
+			authorList.First();
+			int i = 0;
+			boolean authorNotFound;
+			
+			while(i < authorList.GetSize())
+			{
+				authorNotFound = author.equals(authorList.GetValue().getName());
+				authorList.Next();
+				if(authorNotFound)
+				{
+					authorList.Prev();
+					i += authorList.GetSize();
+				}
+				i++;	
+			}
+			
+			i= 0;
+			
+			System.out.print(authorList.GetValue().getName() + " Books: " );
+			String [] Books = authorList.GetValue().listBooks();
+			while(i < Books.length)
+			{
+				System.out.print(this.listBook(Books[i]));
+				i++;
+			}
+		}
+		
+	}
+	
+	public String listBook(String book)
+	{
+		boolean bookFound = books.search(book);
+		if(bookFound)
+		{
+			bookList.First();
+			int i = 0;
+			boolean bookNotFound;
+			
+			while(i < bookList.GetSize())
+			{
+				bookNotFound = book.equals(bookList.GetValue().getTitle());
+				bookList.Next();
+				if(bookNotFound)
+				{
+					bookList.Prev();
+					i += bookList.GetSize();
+				}
+				i++;	
+			}
+			String string = bookList.GetValue().getTitle() + " Checked: " + bookList.GetValue().getChecked() + " ";
+			return string;
+		}
+		return "Error";
+		
+		//System.out.print(bookList.GetValue().getTitle() + " Checked: " + bookList.GetValue().getChecked() );
+		//authorList.GetValue().listBooks();
+	}
+	
+	//lists the books in alpabetical order
+	public String listBooks()
+	{
+		String bookers = books.inorder2();
+		Scanner scanBooks = new Scanner(bookers);
+		scanBooks.useDelimiter("; ");
+		while(scanBooks.hasNext())
+		{
+			System.out.println(this.listBook(scanBooks.next()));
+		}
+		return books.inorder2();
+	}
+	
+	//lists the authors in alphabetical order
+	public void listAuthors()
+	{
+		authors.inorder();
+	}
+	
+	//checks in books
+	public void checkIn()
+	{
+		String returnedBook;
+		while(bookReturn.Peek() != null)
+		{
+			returnedBook = bookReturn.Pop();
+			bookList.First();
+			int i = 0;
+			boolean bookNotFound;
+			
+			while(i < bookList.GetSize())
+			{
+				bookNotFound = returnedBook.equals(bookList.GetValue().getTitle());
+				bookList.Next();
+				if(bookNotFound)
+				{
+					bookList.Prev();
+					i += bookList.GetSize();
+				}
+				i++;	
+			}
+			
+			int compare = bookList.GetValue().getChecked().compareTo("Out");
+			if(compare == 0)
+			{
+				bookList.GetValue().setChecked(1);
+			}
+			else
+			{
+				System.out.println("Book already checked in.");
+			}
+		}
+	}
+	
+	//creates a stack to emulate book returns
+	//books at the top of the pile get checked in first (LIFO)
+	public void bookReturns(String book)
+	{
+		boolean bookFound = books.search(book);
+		if(bookFound)
+		{
+			bookReturn.Push(book);
+		}
+		
+		else
+		{
+			System.out.println("Book not found.");
+		}
+		
+	}
+	
+	//checks out books
+	public void checkOut(String book)
+	{
+		boolean bookFound = books.search(book);
+		if(bookFound)
+		{
+			bookList.First();
+			int i = 0;
+			boolean bookNotFound;
+			
+			while(i < bookList.GetSize())
+			{
+				bookNotFound = book.equals(bookList.GetValue().getTitle());
+				bookList.Next();
+				if(bookNotFound)
+				{
+					bookList.Prev();
+					i += bookList.GetSize();
+				}
+				i++;	
+			}
+			
+			int compare = bookList.GetValue().getChecked().compareTo("In");
+			if(compare == 0)
+			{
+				bookList.GetValue().setChecked(0);
+			}
+			
+			else
+			{
+				System.out.println("Book already checked out.");
+			}
+		}
+		
+		else
+		{
+			System.out.println("Book not found");
+		}
+	}
+	
+	public void prioritize()
+	{
+		this.priority = new Book[bookList.GetSize()];
+		int i = 0;
+		while(i < bookList.GetSize())
+		{
+			bookList.SetPos(i);
+			priority[bookList.GetValue().getPriority() -1] = bookList.GetValue();
+			i++;
+		}
+	}
+	
+	public String getPriorities()
+	{
+		String books = "";
+		int i = 0;
+		while(i < priority.length)
+		{
+			int compare = priority[i].getChecked().compareTo("In");
+			if(compare == 0)
+			{
+				books += priority[i].getTitle() + " " + priority[i].getPriority() +  "; ";
+			}
+			//books += priority[i].getTitle() + " " + priority[i].getPriority() +  "; ";
+			i++;
+		}
+		
+		return books;
+	}
+
+}
+
+class Storage
+{
+	public static void main(String[] args) throws IOException {
+		// TODO Auto-generated method stub
+		//stores the books file in a variable
+		File file = new File("books.txt");
+		
+		SciFiLi newLibrary = new SciFiLi();
+		
+		//makes a scanner to read the books file
+		Scanner scanBooks = new Scanner(file);
+		Scanner scanLine;
+		
+		//linked list to store books
+		List<Book> books = new List<Book>();
+		String line;
+		//delimiter to seperate title, author, check in/out, and priority
+		scanBooks.useDelimiter(", |\\n");
+		//Adds to the books linked list until there is nothing left to add
+		while(scanBooks.hasNext())
+		{
+			line = scanBooks.nextLine();
+			scanLine = new Scanner(line);
+			scanLine.useDelimiter("; ");
+			String title = scanLine.next();
+			String author = scanLine.next();
+			int checked = scanLine.nextInt();
+			int priority = scanLine.nextInt();
+			books.InsertBefore(new Book(title, author, checked, priority));
+			newLibrary.insert(title, author, checked, priority);
+			//pQ.add(priority);
+		}
+		newLibrary.prioritize();
+	
+		
+		/*
+		 * int i = 0;
+		 * 
+		 * while(i < books.GetSize()) {
+		 * System.out.println(books.GetValue().getPriority()); books.Next(); i++; }
+		 */
+		
+		//lists books in alphabetical order and if they are checked in or out
+		 newLibrary.listBooks();
+		 System.out.println();
+		 //lists authors by alphabetical order
+		 newLibrary.listAuthors();
+		 System.out.println();
+		 //lists an outhor if they has been added and any books they have made
+		 newLibrary.listAuthor("Bradbury");
+		 System.out.println();
+		 //lists a book if it has been added and if it is checked in or out
+		 newLibrary.listBook("Brave New World");
+		 System.out.println();
+		 System.out.println(newLibrary.listBook("1984"));
+		 //checks out any books
+		 newLibrary.checkOut("1984");
+		 System.out.println(newLibrary.listBook("1984"));
+		 newLibrary.bookReturns("1984");
+		 newLibrary.checkIn();
+		 System.out.println(newLibrary.listBook("1984"));
+		 //pushes books onto a stack if they have already been added
+		 newLibrary.bookReturns("Fahrenheit 451");
+		 newLibrary.bookReturns("Illustrated Man");
+		 //pops the stack for book returns and checks in books
+		 newLibrary.checkIn();
+		 System.out.println(newLibrary.listBook("Fahrenheit 451"));
+		 System.out.println(newLibrary.listBook("Illustrated Man"));
+		 //prints the priorities of books  numerically by their priority and if they are still in the library
+		 System.out.println(newLibrary.getPriorities());
+	}
+}
