@@ -1,0 +1,48 @@
+package stack;
+
+import list.List;
+
+public class Stack<Type> extends List<Type>
+{
+	public Type Pop()
+	{
+		Type item = this.GetValue();
+		this.Remove();
+		return item;
+	}
+	
+	public void Push(Type data)
+	{
+		this.InsertAfter(data);
+	}
+	public Type Peek()
+	{
+		return this.GetValue();
+	}
+}
+
+
+class Stacker {
+
+	public static void main(String[] args) 
+	{
+		// TODO Auto-generated method stub
+		Stack<Integer> a = new Stack<Integer>();
+		for (int i=1; i<=25; i++)
+		{
+			a.Push(i);
+		}
+		System.out.println(" 4 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		int thing = a.Pop();
+		System.out.println(thing);
+		System.out.println(" 4 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		int j = a.Peek();
+		System.out.println(j);
+		System.out.println(" 4 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.Push(27);
+		System.out.println(" 4 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.Pop();
+		System.out.println(" 4 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+	}
+
+}
