@@ -1,0 +1,635 @@
+package list;
+
+
+public class List<Type>
+{
+    // We don't actually have to set a max size with linked lists
+    // But it is a good idea.
+    // Just picture an infinite loop adding to the list! :O
+    // Yes, you may change this when you do your word count program.
+    public static final int MAX_SIZE = 10000;
+
+    private Node<Type> head;
+    private Node<Type> tail;
+    private Node<Type> curr;
+    private int num_items;
+    private int position;
+    private int endPosition;
+
+    // constructor
+    // remember that an empty list has a "size" of -1 and its "position" is at -1
+    public List()
+    {
+    	//head.setData(null);
+    	head = new Node<Type>();
+    	tail = new Node<Type>();
+    	//head.setLink(tail);
+    	this.curr = this.head;
+    	//tail.setData(null);
+    	//tail.setLink(null);
+    	position = -1;
+    	endPosition = -1;
+    	this.num_items = 0;
+    }
+
+    // copy constructor
+    // clones the list l and sets the last element as the current
+    // (notice we're not just copying the whole list at once?)
+    public List(List<Type> l)
+    {
+    	
+        Node<Type> n = l.head;
+
+        this.head = this.tail = this.curr = null;
+        this.num_items = 0;
+        head = new Node<Type>();
+    	tail = new Node<Type>();
+    	position = -1;
+    	endPosition = -1;
+        while (n != null)
+        {
+            this.InsertAfter(n.getData());
+           // System.out.println(n.getData() + "U");
+            n = n.getLink();
+            
+            
+        }
+    }
+
+    // navigates to the beginning of the list
+    public void First()
+    {
+    	this.curr = this.head;
+    	position = 0;
+    }
+
+    // navigates to the end of the list
+    // the end of the list is at the last valid item in the list
+    public void Last()
+    {
+    	this.curr = this.tail;
+    	this.position = this.endPosition;
+    }
+
+    // navigates to the specified element (0-index)
+    // this should not be possible for an empty list
+    // this should not be possible for invalid positions
+    public void SetPos(int pos)
+    {
+    	if(num_items == 0)
+    	{
+    		
+    	}
+    	else {
+    		this.position = 0;
+        	int i = 0;
+        	this.curr = head;
+        	while(i < pos)
+        	{
+        		this.Next();
+        		i++;
+        	}
+    	}
+    	
+    }
+
+    // navigates to the previous element
+    // this should not be possible for an empty list
+    // there should be no wrap-around
+    public void Prev()
+    {
+    	if(position != 0)
+    	{
+    		this.position -= 1;
+    	}    	
+    	Node<Type> node = this.head;
+    	int i = 0;
+    	while(i < this.position)
+    	{
+    		i++;
+    		node = node.getLink();
+    	}
+    	this.curr = node;
+    }
+
+    
+    // navigates to the next element
+    // this should not be possible for an empty list
+    // there should be no wrap-around
+    public void Next()
+    {
+    	if(this.num_items > 0)
+    	{
+    		if(position != endPosition)
+        	{
+        		this.position += 1;
+        		this.curr = this.curr.getLink();
+        	}
+    		else
+    		{
+    			
+    		}
+    	}
+    	else
+    	{
+    		
+    	}
+    	
+    	
+    }
+
+    // returns the location of the current element (or -1)
+    public int GetPos()
+    {
+    	if(this.num_items == 0)
+    	{
+    		return -1;
+    	}
+    	return this.position;
+    }
+
+    // returns the value of the current element (or -1)
+    public Type GetValue()
+    {
+    	try
+    	{
+    		if(curr.getData() != null)
+        	{
+        		return curr.getData();
+        	}
+    	}
+    	catch(NullPointerException e)
+    	{
+    		return null;
+    	}
+    	/*if(curr.getData() != null)
+    	{
+    		return curr.getData();
+    	}*/
+		/*
+		 * else { return null; }
+		 */
+    	return null;
+    }
+
+    // returns the size of the list
+    // size does not imply capacity
+    public int GetSize()
+    {
+    	return this.num_items;
+    }
+
+    // inserts an item before the current element
+    // the new element becomes the current
+    // this should not be possible for a full list
+    public void InsertBefore(Type data)
+    {
+    	if(MAX_SIZE == num_items)
+    	{
+    		
+    	}
+    	else if(head.getData() == null)
+		{
+			head.setData(data);
+			this.position += 1;
+			this.endPosition += 1;
+			this.num_items += 1;
+		}
+		else if(tail.getData() == null)
+		{
+			tail.setData(head.getData());
+			head.setData(data);
+			head.setLink(tail);
+			endPosition += 1;
+			this.num_items += 1;
+		}
+		else if(this.curr == head)
+		{
+			Node<Type> newNode = new Node<Type>();
+			newNode.setData(head.getData());
+			newNode.setLink(head.getLink());
+			head.setLink(newNode);
+			head.setData(data);
+			endPosition += 1;
+			this.num_items += 1;
+		}
+		else
+		{
+			this.Prev();
+			Node<Type> newNode = new Node<Type>();
+    		newNode.setData(data);
+    		newNode.setLink(curr.getLink());
+    		this.curr.setLink(newNode);
+    		this.curr = newNode;
+    		position += 1;
+    		endPosition += 1;
+    		this.num_items += 1;
+		}
+    		
+    	
+    }
+
+    // inserts an item after the current element
+    // the new element becomes the current
+    // this should not be possible for a full list
+    public void InsertAfter(Type data)
+    {
+    	if(MAX_SIZE == num_items)
+    	{
+    		
+    	}
+    	
+    		
+    		
+    	else if(head.getData() == null)
+		{
+			head.setData(data);
+			this.curr = head;
+			position += 1;
+			endPosition += 1;
+			this.num_items += 1;
+		}
+    		
+    		
+    		
+    			
+    	else if(tail.getData() == null)
+		{
+			tail.setData(data);
+			this.curr = tail;
+			head.setLink(tail);
+			position += 1;
+			endPosition += 1;
+			this.num_items += 1;
+		}
+        		
+        		
+    		
+    		
+    		
+		else if(this.curr == tail)
+		{
+			Node<Type> newNode = new Node<Type>();
+			newNode.setData(tail.getData());
+			newNode.setLink(tail);
+			tail.setData(data);
+			this.Prev();
+			this.curr.setLink(newNode);
+			this.curr = tail;
+			position += 2;
+			endPosition += 1;
+			this.num_items += 1;
+		}
+		else
+		{
+			Node<Type> newNode = new Node<Type>();
+    		newNode.setData(data);
+    		newNode.setLink(curr.getLink());
+    		this.curr.setLink(newNode);
+    		this.curr = newNode;
+    		position += 1;
+			endPosition += 1;
+			this.num_items += 1;
+		}
+    	
+    	
+		
+		
+    }
+
+    // removes the current element 
+    // this should not be possible for an empty list
+    public void Remove()
+    {
+    	
+    	if(curr.getData() == null)
+    	{
+    		
+    	}
+    	else if(this.num_items == 1)
+    	{
+    		head.setData(null);
+    		this.num_items -= 1;
+    		position -= 1;
+    	}
+    	
+    	else if(curr == head)
+    	{
+    		head.setData(head.getLink().getData());
+    		head.setLink(head.getLink().getLink());
+    		endPosition -= 1;
+    		this.num_items -= 1;
+    	}
+    	else if(curr == tail)
+    	{
+    		if(position == 1)
+    		{
+    			tail.setData(null);
+    			this.Prev();
+    			endPosition -= 1;
+    			this.num_items -= 1;
+    		}
+    		else {
+    			this.Prev();
+        		this.Prev();
+        		tail.setData(this.curr.getLink().getData());
+        		this.curr.setLink(tail);
+        		this.Next();
+        		endPosition -= 1;
+        		this.num_items -= 1;
+    		}
+    		
+    	}
+    	else
+    	{
+    		this.Prev();
+    		this.curr.setLink(this.curr.getLink().getLink());
+    		this.Next();
+    		endPosition -= 1;
+    		this.num_items -= 1;
+    	}
+    }
+
+    // replaces the value of the current element with the specified value
+    // this should not be possible for an empty list
+    public void Replace(Type data)
+    {
+    	if(curr.getData() == null)
+    	{
+    		
+    	}
+    	else
+    	{
+    		this.curr.setData(data);
+    	}
+    	
+    }
+
+    // returns if the list is empty
+    public boolean IsEmpty()
+    {
+    	if(this.num_items ==  0)
+    	{
+    		return true;
+    	}
+    	
+    	return false;
+    }
+
+    // returns if the list is full
+    public boolean IsFull()
+    {
+    	if(this.num_items == MAX_SIZE)
+    	{
+    		return true;
+    	}
+    	
+    	return false;
+    }
+    
+    //returns the current node
+    public Node<Type> returnCurr()
+    {
+    	return curr;
+    }
+
+    // returns if two lists are equal (by value)
+    public boolean Equals(List<Type> l)
+    {
+    	boolean nodeEqual = false;
+    	if(this.num_items == l.num_items)
+    	{
+    		this.First();
+    		l.First();
+    		int i = 0;
+    		nodeEqual = true;
+    		while(i < this.num_items)
+    		{
+    			
+        		Type node = this.GetValue();
+        		Type node2 = l.GetValue();
+        		if(node == node2)
+        		{
+        			l.Next();
+        			this.Next();
+        			i++;
+        		}
+        		else
+        		{
+        			nodeEqual = false;
+        			break;
+        		}
+    		}
+    		
+    		return nodeEqual;
+    	}
+    	
+    	return false;
+    }
+
+    // returns the concatenation of two lists
+    // l should not be modified
+    // l should be concatenated to the end of *this
+    // the returned list should not exceed MAX_SIZE elements
+    // the last element of the new list is the current
+    public List<Type> Add(List<Type> l)
+    {
+    	int len = 0;
+		int len2 = 0;
+    	List<Type> list = new List<Type>();
+    	
+    	while(list.num_items != list.MAX_SIZE)
+    	{
+    		this.First();
+    		
+    		if(len < this.GetSize())
+    		{
+    			this.SetPos(len);
+    			list.InsertAfter(this.GetValue());
+    			len++;
+    		}
+    		else if(len2 < l.GetSize())
+    		{
+    			l.SetPos(len2);
+    			list.InsertAfter(l.GetValue());
+    			len2++;	
+    		}
+    		else
+    		{
+    			break;
+    		}
+    		
+    		
+    	}
+    	return list;
+    }
+
+    // returns a string representation of the entire list (e.g., 1 2 3 4 5)
+    // the string "NULL" should be returned for an empty list
+    public String toString()
+    {
+    	if(this.num_items != 0)
+    	{
+    		String str = "";
+    		int i = 0;
+    		Node<Type> node = head;
+    		while(i < this.num_items)
+    		{
+    			str += node.getData() + " ";
+    			node = node.getLink();
+    			i++;
+    		}
+    		return str;
+    	}
+    	return "NULL";
+    	
+    }
+}
+class Node<Type>
+{
+	private Type data;
+	private Node<Type> link;
+	private int priority;
+	
+	// constructor
+	public Node()
+	{
+		this.data = null;
+		this.link = null;
+	}
+
+	// accessor and mutator for the data component
+	public Type getData()
+	{
+		return this.data;
+	}
+
+	public void setData(Type data)
+	{
+		this.data = data;
+	}
+
+	// accessor and mutator for the link component
+	public Node<Type> getLink()
+	{
+		return this.link;
+	}
+
+	public void setLink(Node<Type> link)
+	{
+		this.link = link;
+	}
+	
+	public void setPriority(int priority)
+	{
+		this.priority = priority;
+	}
+	
+	public int getPriority()
+	{
+		return this.priority;
+	}
+}
+
+ class ListTest
+{
+	public static void main(String[] args)
+	{
+		List<Integer> a = new List<Integer>();
+		List<Integer> b = new List<Integer>();
+
+		System.out.println(" 1 " + a.GetValue());
+		System.out.println(" 2 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println(" 3 b(" + b.GetSize() + "/" + b.GetPos() + ") = " + b);
+		for (int i=1; i<=25; i++)
+		{
+			a.InsertAfter(i);
+			b.InsertBefore(i);
+		}
+		System.out.println(" 4 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println(" 5 b(" + b.GetSize() + "/" + b.GetPos() + ") = " + b);
+		List<Integer> c = new List<Integer>(a);
+		System.out.println(" 6 c(" + c.GetSize() + "/" + c.GetPos() + ") = " + c);
+		a.Remove();
+		a.Remove();
+		for (int i=0; i<5; i++)
+			a.Prev();
+		a.Remove();
+		a.Remove();
+		System.out.println(" 7 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.First();
+		a.Remove();
+		for (int i=0; i<a.GetSize()/2; a.Next(),i++)
+		{
+			a.Replace(a.GetValue()*5);
+			a.Next();
+		}
+		System.out.println(" 8 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.Last();
+		a.Next();
+		a.Next();
+		a.Remove();
+		System.out.println(" 9 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.SetPos(a.GetSize()*2/3);
+		a.Replace(a.GetValue()*12345);
+		System.out.println("10 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.SetPos(a.GetSize());
+		a.Remove();
+		System.out.println("11 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		a.SetPos(a.GetSize()-1);
+		a.Remove();
+		System.out.println("12 a is " + (!a.IsEmpty() ? "not " : "") + "empty");
+		System.out.println("13 a is " + (!a.IsFull() ? "not " : "") + "full");
+		for (int i=0; i<1000; i++)
+			a.InsertBefore(i);
+		System.out.println("14 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("15 c(" + c.GetSize() + "/" + c.GetPos() + ") = " + c);
+		System.out.println("16 a is " + (!a.IsEmpty() ? "not " : "") + "empty");
+		System.out.println("17 a is " + (!a.IsFull() ? "not " : "") + "full");
+		List<Integer> d = new List<Integer>(a);
+		System.out.println("18 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("19 d(" + d.GetSize() + "/" + d.GetPos() + ") = " + d);
+		System.out.println("20 a " + (a.Equals(d) ? "==" : "!=") + " d");
+		a.Remove();
+		System.out.println("21 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("22 d(" + d.GetSize() + "/" + d.GetPos() + ") = " + d);
+		System.out.println("23 a " + (a.Equals(d) ? "==" : "!=") + " d");
+		a = new List<Integer>(c);
+		c.Remove();
+		System.out.println("24 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("25 b(" + b.GetSize() + "/" + b.GetPos() + ") = " + b);
+		System.out.println("26 c(" + c.GetSize() + "/" + c.GetPos() + ") = " + c);
+		System.out.println("27 a " + (a.Equals(c) ? "==" : "!=") + " c");
+		List<Integer> e = b.Add(a);
+		System.out.println("28 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("29 b(" + b.GetSize() + "/" + b.GetPos() + ") = " + b);
+		System.out.println("30 e(" + e.GetSize() + "/" + e.GetPos() + ") = " + e);
+		for (int i=0; i<1000; i++)
+		{
+			b.Remove();
+			c.Remove();
+		}
+		System.out.println("31 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("32 b(" + b.GetSize() + "/" + b.GetPos() + ") = " + b);
+		System.out.println("33 c(" + c.GetSize() + "/" + c.GetPos() + ") = " + c);
+		System.out.println("34 e(" + e.GetSize() + "/" + e.GetPos() + ") = " + e);
+		List<Integer> f = b.Add(a);
+		System.out.println("35 a(" + a.GetSize() + "/" + a.GetPos() + ") = " + a);
+		System.out.println("36 b(" + b.GetSize() + "/" + b.GetPos() + ") = " + b);
+		System.out.println("37 f(" + f.GetSize() + "/" + f.GetPos() + ") = " + f);
+
+		List<Character> g = new List<Character>();
+		for (char i='a'; i<='m'; i++)
+		{
+			g.InsertAfter(i);
+			g.InsertBefore((char)(i+13));
+		}
+		System.out.println("38 g(" + g.GetSize() + "/" + g.GetPos() + ") = " + g);
+
+		List<Float> h = new List<Float>();
+		for (float i=2.71828f; i<=3.14159f; i+=.111f)
+			h.InsertAfter(i);
+		h.InsertBefore(3.14159f);
+		System.out.println("39 h(" + h.GetSize() + "/" + h.GetPos() + ") = " + h);
+	}
+}
