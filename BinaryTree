@@ -1,0 +1,482 @@
+package binaryTree;
+
+import java.util.Scanner;
+
+/* Class BTNode */
+class BTNode
+{    
+    BTNode left, right, parent;
+    Object object;
+    String data;
+
+    /* Constructor */
+    public BTNode()
+    {
+        left = null;
+        right = null;
+        parent = null;
+        data = null;
+    }
+    /* Constructor */
+    public BTNode(String info)
+    {
+        left = null;
+        right = null;
+        data = info;
+    }
+    
+    //alternate constructor
+    public BTNode(String info, Object addInfo)
+    {
+        left = null;
+        right = null;
+        data = info;
+        object = addInfo;
+    }
+    
+    public BTNode(String info, BTNode node)
+    {
+    	parent = node;
+        left = null;
+        right = null;
+        data = info;
+    }
+    /* Function to set left node */
+    public void setLeft(BTNode n)
+    {
+        left = n;
+    }
+    /* Function to set right node */ 
+    public void setRight(BTNode n)
+    {
+        right = n;
+    }
+    /* Function to get left node */
+    public BTNode getLeft()
+    {
+        return left;
+    }
+    /* Function to get right node */
+    public BTNode getRight()
+    {
+        return right;
+    }
+    /* Function to set data to node */
+    public void setData(String info)
+    {
+        data = info;
+    }
+    /* Function to get data from node */
+    public String getData()
+    {
+        return data;
+    }
+    
+    //sets the stored object
+    public void setObject(Object info)
+    {
+    	object = info;
+    }
+    
+    //returns the stored object
+    public Object getObject()
+    {
+    	return object;
+    }
+}
+
+/* Class BT */
+public class BinaryTree
+{
+    private BTNode root;
+
+    /* Constructor */
+    public BinaryTree()
+    {
+        root = null;
+    }
+    /* Function to check if tree is empty */
+    public boolean isEmpty()
+    {
+        return root == null;
+    }
+    /* Functions to insert data */
+    public void insert(String data)
+    {
+        root = insert(root, data);
+    }
+    /* Function to insert data recursively */
+    private BTNode insert(BTNode node, String data)
+    {
+        if (node == null)
+            node = new BTNode(data);
+        else
+        {
+        	//gotten from beginnersbook.com
+        	int compare = node.getData().compareTo(data);
+            if (compare < 0)
+                node.right = insert(node.right, node, data);
+            else if(compare > 0)
+            {
+                node.left = insert(node.left, node, data);       
+            }
+            else
+            {
+            	//do nothing since it is adding the same element
+            }            
+        }
+        return node;
+    }
+    
+    private BTNode insert(BTNode node, BTNode parent, String data)
+    {
+        if (node == null)
+            node = new BTNode(data, parent);
+        else
+        {
+        	int compare = node.getData().compareTo(data);
+            if (compare < 0)
+                node.right = insert(node.right, node, data);
+            else if(compare > 0)
+            {
+                node.left = insert(node.left, node, data);       
+            }
+            else
+            {
+            	//do nothing since it is adding the same element
+            }
+        }
+        return node;
+    }
+    
+    private BTNode insertNode(BTNode node, String data, Object object)
+    {
+        if (node == null)
+            node = new BTNode(data, object);
+        else
+        {
+        	//gotten from beginnersbook.com
+        	int compare = node.getData().compareTo(data);
+            if (compare < 0)
+                node.right = insert(node.right, node, data);
+            else if(compare > 0)
+            {
+                node.left = insert(node.left, node, data);       
+            }
+            else
+            {
+            	//do nothing since it is adding the same element
+            }            
+        }
+        return node;
+    }
+    
+    private BTNode insertNode(BTNode node, BTNode parent, String data, Object object)
+    {
+        if (node == null)
+            node = new BTNode(data, parent);
+        else
+        {
+        	int compare = node.getData().compareTo(data);
+            if (compare < 0)
+                node.right = insert(node.right, node, data);
+            else if(compare > 0)
+            {
+                node.left = insert(node.left, node, data);       
+            }
+            else
+            {
+            	//do nothing since it is adding the same element
+            }
+        }
+        return node;
+    }
+    
+    //Function to remove a node
+    public void remove(String data)
+    {
+    	BTNode node = searchNode(data);
+    	System.out.println(node.parent.getData());
+    	BTNode newNode;
+    	if(node.getLeft() != null)
+    	{
+    		newNode = node.getLeft();
+    		while(newNode.getRight() != null)
+    		{
+    			newNode = newNode.getRight();
+    		}
+    		//int baseData = node.getData();
+    		node.setData(newNode.getData());
+    		if(newNode.getLeft() != null)
+    		{
+    			newNode.parent.setRight(newNode.getLeft());
+    		}
+    		else if(newNode.parent == node)
+    		{
+    			node.setLeft(null);
+    		}
+    		else if(newNode.getLeft() == null)
+    		{
+    			newNode.parent.setRight(null);
+    		}
+    	}
+    	else if(node.getRight() != null)
+    	{
+    		newNode = node.getRight();
+    		while(newNode.getLeft() != null)
+    		{
+    			newNode = newNode.getLeft();
+    		}
+    		//int baseData = node.getData();
+    		node.setData(newNode.getData());
+    		if(newNode.getRight() != null)
+    		{
+    			newNode.parent.setLeft(newNode.getRight());
+    		}
+    		else if(newNode.getRight() == null)
+    		{
+    			newNode.parent.setLeft(null);
+    		}
+    	}
+    	else if(node.parent != null)
+    	{
+    		node = node.parent;
+    		if(node.getLeft() != null)
+    		{
+    			if(node.getLeft().getData() == data)
+    			{
+    				node.setLeft(null);
+    			}
+    		}
+    		if(node.getRight() != null)
+    		{
+    			if(node.getRight().getData() == data)
+    			{
+    				node.setRight(null);
+    			}
+    		}
+    	}
+    }
+    
+    public BTNode searchNode(String val)
+    {
+        return searchNode(root, val);
+    }
+    /* Function to search for an node recursively */
+    private BTNode searchNode(BTNode r, String val)
+    {
+    	
+    	int compare = r.getData().compareTo(val);
+        if (compare == 0) {
+        	System.out.println(r.getData()+ "hi");
+            return r;
+        }
+        else if (compare > 0)
+            return searchNode(r.getLeft(), val);
+               
+        else if (compare < 0)
+            return searchNode(r.getRight(), val);
+        
+        	return null;      
+        
+    }
+    
+    /* Function to count number of nodes */
+    public int countNodes()
+    {
+        return countNodes(root);
+    }
+    /* Function to count number of nodes recursively */
+    private int countNodes(BTNode r)
+    {
+        if (r == null)
+            return 0;
+        else
+        {
+            int l = 1;
+            l += countNodes(r.getLeft());
+            l += countNodes(r.getRight());
+            return l;
+        }
+    }
+    /* Function to search for an element */
+    public boolean search(String val)
+    {
+        return search(root, val);
+    }
+    /* Function to search for an element recursively */
+    private boolean search(BTNode r, String val)
+    {
+    	try {
+    	int compare = r.getData().compareTo(val);
+        if (compare == 0)
+        {
+            return true;
+        }
+        else if (compare > 0) {
+            if (search(r.getLeft(), val))
+            {
+                return true;
+            }
+        }
+        else if (compare < 0)
+        {
+            if (search(r.getRight(), val))
+            {
+                return true;
+            }
+        }
+        return false;  
+    	}
+    	catch(Exception e)
+    	{
+    		return false;
+    	}
+    }
+    /* Function for inorder traversal */
+    public void inorder()
+    {
+        inorder(root);
+    }
+    private void inorder(BTNode r)
+    {
+        if (r != null)
+        {
+            inorder(r.getLeft());
+            System.out.print(r.getData() +"; ");
+            inorder(r.getRight());
+        }
+    }
+    
+    
+    //function that returns inorder traversal
+    public String inorder2()
+    {
+        return inorder2(root);
+    }
+    private String inorder2(BTNode r)
+    {
+        if (r != null)
+        {
+        	String order = inorder2(r.getLeft()) + r.getData() + "; " + inorder2(r.getRight());
+        	return order;
+            //inorder2(r.getLeft());
+            //System.out.print(r.getData() +"; ");
+            //inorder2(r.getRight());
+        }
+        return "";
+    }
+    
+    private String inorder3(BTNode r)
+    {
+        if (r != null)
+        {
+        	//String order = inorder2(r.getLeft());
+        	return r.getData() + "; ";
+            //inorder2(r.getLeft());
+           // System.out.print(r.getData() +"; ");
+           // inorder2(r.getRight());
+        }
+        return "";
+    }
+    /* Function for preorder traversal */
+    public void preorder()
+    {
+        preorder(root);
+    }
+    private void preorder(BTNode r)
+    {
+        if (r != null)
+        {
+            System.out.print(r.getData() +" ");
+            preorder(r.getLeft());             
+            preorder(r.getRight());
+        }
+    }
+    /* Function for postorder traversal */
+    public void postorder()
+    {
+        postorder(root);
+    }
+    private void postorder(BTNode r)
+    {
+        if (r != null)
+        {
+            postorder(r.getLeft());             
+            postorder(r.getRight());
+            System.out.print(r.getData() +" ");
+        }
+    }
+    
+    public String getData()
+    {
+    	//BTNode r = root.getLeft().getRight().getLeft();
+    	return root.getData();
+    }
+}
+
+/* Class BinaryTree */
+class BT
+{
+    public static void main(String[] args)
+   {            
+       Scanner scan = new Scanner(System.in);
+       /* Creating object of BT */
+       BinaryTree bt = new BinaryTree(); 
+       /*  Perform tree operations  */
+       System.out.println("Binary Tree Test\n");          
+       char ch;        
+		
+		  //bt.insert("hi"); 
+		  bt.insert("hello");
+		  //bt.insert("goodbye"); bt.insert("bye");
+		 
+       //System.out.println(bt.getData());
+       do    
+       {
+           System.out.println("\nBinary Tree Operations\n");
+           System.out.println("1. insert ");
+           System.out.println("2. search");
+           System.out.println("3. count nodes");
+           System.out.println("4. check empty");
+           System.out.println("5. remove");
+
+           int choice = scan.nextInt();            
+           switch (choice)
+           {
+           case 1 : 
+               System.out.println("Enter integer element to insert");
+               bt.insert( scan.next() );                     
+               break;                          
+           case 2 : 
+               System.out.println("Enter integer element to search");
+               System.out.println("Search result : "+ bt.search( scan.next() ));
+               break;                                          
+           case 3 : 
+               System.out.println("Nodes = "+ bt.countNodes());
+               break;     
+           case 4 : 
+               System.out.println("Empty status = "+ bt.isEmpty());
+               break;    
+           case 5:
+        	   System.out.println("What do you want to remove?");
+        	   bt.remove(scan.next());
+        	   
+        	   break;
+           default : 
+               System.out.println("Wrong Entry \n ");
+               break;   
+           }
+           /*  Display tree  */ 
+           System.out.print("\nPost order : ");
+           bt.postorder();
+           System.out.print("\nPre order : ");
+           bt.preorder();
+           System.out.print("\nIn order : ");
+           bt.inorder();
+
+           System.out.println("\n\nDo you want to continue (Type y or n) \n");
+           ch = scan.next().charAt(0);                        
+       } while (ch == 'Y'|| ch == 'y');               
+   }
+}
